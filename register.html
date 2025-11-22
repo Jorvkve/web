@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สมัครสมาชิก - Demon Slayer</title>
+    <link rel="stylesheet" href="css/ind2.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <div class="nav-con">
+                <div class="logo"><a href="index.html">ดาบพิฆาตอสูร</a></div>
+                <ul class="menu">
+                    <li><a href="index.html">หน้าหลัก</a></li>
+                    <li><a href="listbook.html">หนังสือ</a></li>
+                    <li><a href="souvenir.html">สินค้าที่ระลึก</a></li>
+                    <li><a href="register.html">สมัครสมาชิก</a></li>
+                    <li><a href="contact.html">ติดต่อเรา</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="form-section">
+        <div class="form-box">
+            <h2 class="form-header">สมัครสมาชิกนักล่าอสูร</h2>
+            <form action="#">
+                <div class="form-group">
+                    <label>เพศ</label>
+                    <div class="gender-option">
+                        <label>
+                            <input type="radio" name="gender" value="male"> ชาย
+                        </label>
+                        
+                        <label>
+                            <input type="radio" name="gender" value="female"> หญิง
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>วัน/เดือน/ปีเกิด</label>
+                    <input type="date" name="date">
+                </div>
+
+                <div class="form-group">
+                    <label>เพศ</label>
+                    <input type="radio" name="gender" value="male"> ชาย
+                    <input type="radio" name="gender" value="female"> หญิง
+                </div>
+
+                <div class="form-group">
+                    <label>อีเมล</label>
+                    <input type="email" id="email" placeholder="name@example.com">
+                </div>
+
+                <hr style="margin: 20px 0;">
+                
+                <div class="form-group">
+                    <label>ชื่อผู้ใช้ (Login)</label>
+                    <input type="text" id="login" placeholder="Username">
+                </div>
+                <div class="form-group">
+                    <label>รหัสผ่าน</label>
+                    <input type="password" id="pswd" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <label>ยืนยันรหัสผ่าน</label>
+                    <input type="password" id="cpswd" placeholder="Confirm Password">
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" required> ยืนยันว่าข้อมูลถูกต้อง
+                </div>
+
+                <button type="submit" class="submit-btn">ลงทะเบียน</button>
+            </form>
+        </div>
+    </section>
+
+    <div class="footer-bottom">
+        Copyright 2025, All reserved
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
