@@ -1,18 +1,22 @@
-/* ไฟล์: script.js
-   หน้าที่: ควบคุมทั้งระบบตะกร้าสินค้า และ ระบบสมัครสมาชิก (รวมทุกฟังก์ชัน)
-*/
+/* ============================================================
+   ไฟล์: script.js
+   คำอธิบาย: ควบคุมการทำงานของระบบตะกร้าสินค้า, การตรวจสอบฟอร์ม, 
+   และการแสดงผลเมนูแบบ Dynamic
+   ============================================================ */
 
-// รอให้โหลดหน้าเว็บเสร็จก่อน
+// [EXTRA] ใช้ Event 'DOMContentLoaded' เพื่อรอให้ HTML โหลดเสร็จสมบูรณ์ก่อน 100%
+// ป้องกันปัญหา JavaScript ทำงานก่อนที่ปุ่มหรือ Element จะปรากฏบนหน้าจอ
 document.addEventListener('DOMContentLoaded', () => {
     
     // ============================================================
-    // ส่วนที่ 1: ระบบตะกร้าสินค้า (Cart Modal)
+    // ส่วนที่ 1: ระบบตะกร้าสินค้า (Advanced DOM Manipulation)
     // ============================================================
     
-    // 1.1 ตัวแปรเก็บสินค้า
+    // [EXTRA] ใช้ Array เป็น Data Structure เก็บข้อมูลสินค้าชั่วคราว (แทน Database)
     let cart = []; 
 
-    // 1.2 สร้าง CSS สำหรับหน้าต่างตะกร้าผ่าน JS
+    // [EXTRA] ใช้ JavaScript สร้าง CSS (Inject Styles) โดยไม่ต้องไปยุ่งกับไฟล์ .css
+    // ช่วยให้จัดการ Style ของ Popup ตะกร้าได้จบในไฟล์เดียว
     const style = document.createElement('style');
     style.innerHTML = `
         /* ปุ่มตะกร้าลอย */
@@ -53,7 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.head.appendChild(style);
 
-    // 1.3 ฟังก์ชันสร้าง HTML ของ Modal
+    // [EXTRA] ฟังก์ชันสร้าง HTML Elements ผ่าน JavaScript (createElement)
+    // ทำให้มีปุ่มตะกร้าในทุกหน้าอัตโนมัติ โดยไม่ต้องไปแก้ HTML ทีละไฟล์
     function createCartUI() {
         const cartBtn = document.createElement('div');
         cartBtn.className = 'cart-floating-btn';
@@ -61,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cartBtn.onclick = openCartModal;
         document.body.appendChild(cartBtn);
 
+        // ใช้ Template Literal (``) เพื่อเขียน HTML แทรกตัวแปรได้ง่าย
         const modalHTML = `
             <div class="cart-modal-overlay" id="cartOverlay">
                 <div class="cart-modal">
@@ -89,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return parseFloat(cleanString) || 0;
     }
 
+    // [EXTRA] Logic การคำนวณราคาและจัดการ Array
     function addToCart(name, priceText) {
         const price = parsePrice(priceText);
         const existingItem = cart.find(item => item.name === name);
@@ -117,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCartItems();
     };
 
+    // [EXTRA] ฟังก์ชันคำนวณยอดรวมโดยใช้ .reduce() (High-order function)
     function updateCartCount() {
         const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
         document.querySelector('.cart-count').innerText = totalQty;
@@ -153,16 +161,21 @@ document.addEventListener('DOMContentLoaded', () => {
         totalEl.innerText = `ยอดรวม: ${grandTotal.toLocaleString()} บาท`;
     }
 
-    // เริ่มต้นสร้างปุ่มตะกร้า
+    // เริ่มทำงานสร้าง UI ตะกร้า
     createCartUI();
 
-    // ดักจับปุ่มสั่งซื้อ
+    // ============================================================
+    // ส่วนที่ 2: Event Handling (การดักจับเหตุการณ์)
+    // ============================================================
     const buyButtons = document.querySelectorAll('.content-btn');
     buyButtons.forEach(button => {
         button.addEventListener('click', (event) => {
             const href = button.getAttribute('href');
+            // เช็คว่าเป็นปุ่มจำลอง (#) หรือไม่
             if (href === '#' || href === '') {
-                event.preventDefault(); 
+                event.preventDefault(); // ป้องกันการดีดขึ้นบนสุดของหน้าเว็บ
+                // [EXTRA] เทคนิค DOM Traversal: ใช้ .closest()
+                // เพื่อหา "กล่องสินค้าแม่" ของปุ่มที่ถูกกด ทำให้ดึงชื่อและราคาได้ถูกต้องแม่นยำ
                 const productBox = button.closest('.product-item') || button.closest('.content-item');
                 if (productBox) {
                     let nameEl = productBox.querySelector('h4');
@@ -178,17 +191,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // ============================================================
-    // ส่วนที่ 2: ระบบตรวจสอบฟอร์มและแก้ Error 405 (สำคัญ!)
+    // ส่วนที่ 3: Form Validation & Error Handling
     // ============================================================
     
     const form = document.querySelector('form');
 
     if (form) {
         form.addEventListener('submit', (event) => {
-            // *** บรรทัดนี้สำคัญมาก! ป้องกัน Error 405 ***
+            // [EXTRA] สำคัญ: ใช้ preventDefault() ป้องกันการ Submit แบบ POST
+            // เพื่อแก้ปัญหา Error 405 Method Not Allowed บน Server จำลอง
             event.preventDefault(); 
 
-            // ดึงค่าต่างๆ มาตรวจสอบ
+            // ตรวจสอบความถูกต้อง (Validation) ก่อนเปลี่ยนหน้า
             const pswd = document.getElementById('pswd');
             const cpswd = document.getElementById('cpswd');
             const email = document.getElementById('email');
@@ -211,16 +225,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // ถ้าผ่านทุกเงื่อนไข ให้ย้ายไปหน้า success.html
+            // ถ้าผ่านหมด ให้ Redirect ไปหน้า Success
             window.location.href = 'success.html';
         });
     }
 
-    // ... (โค้ดเดิมด้านบน) ...
-
     // ============================================================
-    // ส่วนที่ 3: ทำให้เมนูรู้ว่าเราอยู่หน้าไหน (Active Menu Highlighting)
+    // ส่วนที่ 4: Active Menu (เมนูรู้จำหน้า)
     // ============================================================
+    
+    // [EXTRA] เช็ค URL ปัจจุบัน เทียบกับลิงก์ในเมนู เพื่อ Highlight หน้าที่ใช้งานอยู่
     const currentLocation = location.href; // ดึงลิงก์ของหน้าปัจจุบันมา
     const menuItem = document.querySelectorAll('.menu li a');
     const menuLength = menuItem.length;
@@ -232,5 +246,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-// (บรรทัดปิดท้ายไฟล์เดิม)
 });
