@@ -194,15 +194,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // ส่วนที่ 3: Form Validation & Error Handling
     // ============================================================
     
-    const form = document.querySelector('form');
+    const registerForm = document.getElementById('register-form');
 
-    if (form) {
-        form.addEventListener('submit', (event) => {
-            // [EXTRA] สำคัญ: ใช้ preventDefault() ป้องกันการ Submit แบบ POST
-            // เพื่อแก้ปัญหา Error 405 Method Not Allowed บน Server จำลอง
-            event.preventDefault(); 
+    if (registerForm) {
+        registerForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // ป้องกัน Error 405
 
-            // ตรวจสอบความถูกต้อง (Validation) ก่อนเปลี่ยนหน้า
+            // ตรวจสอบความถูกต้องเฉพาะหน้าสมัครสมาชิก
             const pswd = document.getElementById('pswd');
             const cpswd = document.getElementById('cpswd');
             const email = document.getElementById('email');
@@ -218,15 +216,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
             }
-
+            
             // ตรวจสอบอีเมล
             if (email && email.value.trim() === '') {
                 alert('⚠️ กรุณากรอกอีเมล');
                 return;
             }
 
-            // ถ้าผ่านหมด ให้ Redirect ไปหน้า Success
+            // ถ้าผ่านหมด ให้ไปหน้า Success ของการสมัคร
             window.location.href = 'success.html';
+        });
+    }
+
+    // --- 3.2 สำหรับหน้า "ติดต่อเรา" (Contact Form) ---
+    const contactForm = document.getElementById('contact-form');
+
+    if (contactForm) {
+        contactForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // ป้องกันการเปลี่ยนหน้า
+
+            // ดึงค่าหัวข้อ (ถ้ามีระบบ auto fill จากตะกร้า)
+            const subject = document.querySelector('input[type="text"]').value;
+            
+            // แสดงข้อความขอบคุณแบบง่ายๆ
+            alert(`✅ ทางเราได้รับข้อความเรื่อง "${subject}" เรียบร้อยแล้ว!\nเจ้าหน้าที่จะติดต่อกลับภายใน 24 ชม. ครับ`);
+            
+            // เคลียร์ค่าในฟอร์ม หรือกลับหน้าแรก
+            contactForm.reset(); 
+            window.location.href = 'index.html'; // ส่งกลับหน้าแรก
         });
     }
 
